@@ -1,3 +1,4 @@
+ 
 package com.upgrad.quora.api.controller;
 
 import com.upgrad.quora.api.model.QuestionDetailsResponse;
@@ -59,10 +60,10 @@ public class QuestionController {
         List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<QuestionDetailsResponse>();
         if (!questionEntityList.isEmpty()) {
 
-            for (QuestionEntity n : questionEntityList) {
+            for (QuestionEntity questionEntity : questionEntityList) {
                 QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse();
-                questionDetailsResponse.setId(n.getUuid());
-                questionDetailsResponse.setContent(n.getContent());
+                questionDetailsResponse.setId(questionEntity.getUuid());
+                questionDetailsResponse.setContent(questionEntity.getContent());
 
                 questionDetailsResponseList.add(questionDetailsResponse);
             }
