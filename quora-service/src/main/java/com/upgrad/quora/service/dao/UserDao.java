@@ -1,3 +1,4 @@
+ 
 package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
@@ -61,4 +62,14 @@ public class UserDao {
             return null;
         }
     }
+
+    public UserAuthTokenEntity getUserAuthTokenByUuid(final String uuid){
+        try {
+            return entityManager.createNamedQuery("userAuthTokenByUuid", UserAuthTokenEntity.class).setParameter("uuid", uuid).getSingleResult();
+        } catch (NoResultException nre) {
+
+            return null;
+        }
+    }
+
 }
