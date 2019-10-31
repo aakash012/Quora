@@ -4,8 +4,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,37 +11,42 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-
 @Entity
-@Table(name = "question")
+@Table(name = "answer")
 @NamedQueries({
-        @NamedQuery(name= "allQuestions",query = "select q from QuestionEntity q "),
-        @NamedQuery(name= "questionById",query = "select q from QuestionEntity q where q.uuid = :uuid")
+        @NamedQuery(name= "answerById",query = "select a from AnswerEntity a where a.uuid = :uuid")
 })
-public class QuestionEntity implements Serializable {
+public class AnswerEntity implements Serializable {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "UUID")
+    @Column(name="uuid")
     @Size(max = 200)
     private String uuid;
 
+    @Column(name = "ans")
+    @NotNull
+    @Size(max = 255)
+    private String ans;
+
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @Column(name = "CONTENT")
+    @JoinColumn(name = "question_id")
     @NotNull
-    @Size(max = 500)
-    private String content;
+    private QuestionEntity question;
 
-    @Column(name = "DATE")
-    @NotNull
+    @Column(name = "date")
     private ZonedDateTime date;
+
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
 
     public Integer getId() {
         return id;
@@ -61,6 +64,23 @@ public class QuestionEntity implements Serializable {
         this.uuid = uuid;
     }
 
+    public ZonedDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
+    }
+
+    public void setAns(String ans) {
+        this.ans = ans;
+    }
+
+    public String getAns()
+    {
+        return ans;
+    }
+
     public UserEntity getUser() {
         return user;
     }
@@ -69,24 +89,12 @@ public class QuestionEntity implements Serializable {
         this.user = user;
     }
 
-    public String getContent() {
-        return content;
+    public QuestionEntity getQuestion() {
+        return question;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public ZonedDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
-    }
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
+    public void setQuestion(QuestionEntity quesId) {
+        this.question = quesId;
     }
 
     @Override
@@ -98,4 +106,6 @@ public class QuestionEntity implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
+
+
 }
