@@ -1,4 +1,3 @@
-
 package com.upgrad.quora.service.business;
 
 import com.upgrad.quora.service.dao.UserDao;
@@ -18,9 +17,9 @@ public class SignupBusinessService {
     @Autowired
     private PasswordCryptographyProvider passwordCryptographyProvider;
 
+    /*
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity signup(UserEntity userEntity,String userName,String email) throws SignUpRestrictedException {
-
         if (userDao.getUserByUserName(userName) != null) {
             throw new SignUpRestrictedException("SGR-001", "Try any other Username, this Username has already been taken");
         }
@@ -28,12 +27,42 @@ public class SignupBusinessService {
             throw new SignUpRestrictedException("SGR-002", "This user has already been registered, try with any other emailId");
         }
         else {
-
             String[] encryptedText = passwordCryptographyProvider.encrypt(userEntity.getPassword());
             userEntity.setSalt(encryptedText[0]);
             userEntity.setPassword(encryptedText[1]);
-
             return userDao.createUser(userEntity);
+        }
+    }
+    */
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public UserEntity signup(UserEntity userEntity) throws SignUpRestrictedException {
+        if(!isUserExist(userEntity)&& !isUserEmailExist(userEntity)){
+            String[] encryptedText = passwordCryptographyProvider.encrypt(userEntity.getPassword());
+            userEntity.setSalt(encryptedText[0]);
+            userEntity.setPassword(encryptedText[1]);
+            return userDao.createUser(userEntity);
+        }
+        return null;
+
+    }
+
+    private boolean isUserExist(UserEntity userEntity) throws SignUpRestrictedException {
+        UserEntity entity = userDao.getUserByUserName(userEntity.getUserName());
+        if(entity != null){
+            throw  new SignUpRestrictedException("SGR-001","Try any other Username, this Username has already been taken");
+        }else
+        { return  false;
+        }
+    }
+
+    private boolean isUserEmailExist(UserEntity userEntity) throws SignUpRestrictedException {
+
+        UserEntity emailEntity = userDao.getUserByEmail(userEntity.getEmail());
+        if(emailEntity != null){
+            throw new SignUpRestrictedException("SGR-002","This user has already been registered, try with any other emailId");
+        }else
+        { return  false;
         }
     }
 }

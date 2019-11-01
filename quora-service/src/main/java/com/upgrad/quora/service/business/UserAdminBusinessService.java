@@ -10,24 +10,79 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
+
 @Service
 public class UserAdminBusinessService {
 
     @Autowired
     private UserDao userDao;
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public UserEntity getUser(final String userUuid,final String authorizationToken) throws
-            UserNotFoundException, AuthorizationFailedException {
+    public UserEntity getUser(final String userUuid, final String authorizationToken) throws
+            AuthorizationFailedException, UserNotFoundException {
+
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        if(userAuthTokenEntity == null){
+        UserEntity userEntity = userDao.getUserByUuid(userUuid);
+        if(userAuthTokenEntity == null)
+        {
             throw new AuthorizationFailedException("ATHR-001","User has not signed in");
-        } else if(userAuthTokenEntity.getLogoutAt()!=null){
+        }
+
+        ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
+        ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
+        /**Can check for access token expiry
+         final ZonedDateTime now = ZonedDateTime.now();
+         ZonedDateTime authTokenExpiryTime = userAuthTokenEntity.getExpiresAt();*/
+        if(loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus))
+        {
+            throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get user details");
+        }
+        if(userEntity == null)
+        {
+            throw new UserNotFoundException("USR-001", "User with entered uuid does not exist");
+        }
+
+        return userEntity;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public String deleteUser(final String userUuid, final String authorizationToken) throws
+            AuthorizationFailedException, UserNotFoundException
+    {
+        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
+        String loggedInUserId = userAuthTokenEntity.getUuid();
+        UserEntity loggedUser = userDao.getUserByUuid(loggedInUserId);
+        String role = loggedUser.getRole();
+        //Check if user has signed-in
+        if(userAuthTokenEntity == null)
+        {
+            throw new AuthorizationFailedException("ATHR-001","User has not signed in");
+        }
+        //Check if user has signed-out
+        ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
+        ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
+        /**Can check for access token expiry
+         * final ZonedDateTime now = ZonedDateTime.now();
+         ZonedDateTime authTokenExpiryTime = userAuthTokenEntity.getExpiresAt();*/
+        if(loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus))
+        {
             throw new AuthorizationFailedException("ATHR-002","User is signed out");
-        } else if (userDao.getUserByUuid(userUuid)== null) {
+        }
+
+        //Check if the user has admin privilege
+        if(role.equals("nonadmin"))
+        {
+            throw new AuthorizationFailedException("ATHR-003","Unauthorized Access, Entered user is not an admin");
+        }
+        UserEntity userEntityToDelete = userDao.getUserByUuid(userUuid);
+
+        //Check if user to be deleted is present in repository
+        if(userEntityToDelete == null)
+        {
             throw new UserNotFoundException("USR-001", "User with entered uuid to be deleted does not exist");
-        } else {
-            return userDao.getUserByUuid(userAuthTokenEntity.getUuid());
+        }else{
+            userDao.deleteUser(userUuid);
+            return userUuid;
         }
     }
 }
