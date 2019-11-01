@@ -1,3 +1,4 @@
+ 
 package com.upgrad.quora.service.entity;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -14,13 +15,15 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "user_auth")
+@Table(name = "question")
 @NamedQueries({
-        @NamedQuery(name = "userAuthTokenByAccessToken", query = "select ut from UserAuthTokenEntity ut where ut.accessToken = :accessToken "),
-        @NamedQuery(name="UserByUserUuid",query ="select ut from UserAuthTokenEntity ut where ut.id =:uuid"),
-        @NamedQuery(name="userAuthTokenByUuid",query="select ut from UserAuthTokenEntity ut where ut.uuid = :uuid")
+        @NamedQuery(name = "questionByQUuid", query = "select q from QuestionEntity q where q.uuid =:uuid"),
+        @NamedQuery(name= "allQuestionsByUserId",query = "select q from QuestionEntity q where q.user = :user"),
+        @NamedQuery(name= "allQuestions",query = "select q from QuestionEntity q "),
+        @NamedQuery(name= "questionById",query = "select q from QuestionEntity q where q.uuid = :uuid")
+
 })
-public class UserAuthTokenEntity implements Serializable {
+public class QuestionEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
@@ -36,21 +39,14 @@ public class UserAuthTokenEntity implements Serializable {
     @JoinColumn(name = "USER_ID")
     private UserEntity user;
 
-    @Column(name = "ACCESS_TOKEN")
+    @Column(name = "CONTENT")
     @NotNull
     @Size(max = 500)
-    private String accessToken;
+    private String content;
 
-    @Column(name = "LOGIN_AT")
+    @Column(name = "DATE")
     @NotNull
-    private ZonedDateTime loginAt;
-
-    @Column(name = "EXPIRES_AT")
-    @NotNull
-    private ZonedDateTime expiresAt;
-
-    @Column(name = "LOGOUT_AT")
-    private ZonedDateTime logoutAt;
+    private ZonedDateTime date;
 
     public Integer getId() {
         return id;
@@ -76,38 +72,21 @@ public class UserAuthTokenEntity implements Serializable {
         this.user = user;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getContent() {
+        return content;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public ZonedDateTime getLoginAt() {
-        return loginAt;
+    public ZonedDateTime getDate() {
+        return date;
     }
 
-    public void setLoginAt(ZonedDateTime loginAt) {
-        this.loginAt = loginAt;
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
     }
-
-    public ZonedDateTime getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(ZonedDateTime expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-
-    public ZonedDateTime getLogoutAt() {
-        return logoutAt;
-    }
-
-    public void setLogoutAt(ZonedDateTime logoutAt) {
-        this.logoutAt = logoutAt;
-    }
-
     @Override
     public boolean equals(Object obj) {
         return new EqualsBuilder().append(this, obj).isEquals();

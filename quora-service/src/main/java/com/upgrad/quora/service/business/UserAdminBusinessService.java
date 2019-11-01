@@ -31,8 +31,8 @@ public class UserAdminBusinessService {
         ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
         ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
         /**Can check for access token expiry
-         final ZonedDateTime now = ZonedDateTime.now();
-         ZonedDateTime authTokenExpiryTime = userAuthTokenEntity.getExpiresAt();*/
+        final ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime authTokenExpiryTime = userAuthTokenEntity.getExpiresAt();*/
         if(loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus))
         {
             throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get user details");
@@ -63,7 +63,7 @@ public class UserAdminBusinessService {
         ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
         /**Can check for access token expiry
          * final ZonedDateTime now = ZonedDateTime.now();
-         ZonedDateTime authTokenExpiryTime = userAuthTokenEntity.getExpiresAt();*/
+        ZonedDateTime authTokenExpiryTime = userAuthTokenEntity.getExpiresAt();*/
         if(loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus))
         {
             throw new AuthorizationFailedException("ATHR-002","User is signed out");
