@@ -1,16 +1,16 @@
 package com.upgrad.quora.service.business;
 
 
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.Random;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-
-import org.springframework.stereotype.Component;
 
 
 @Component
@@ -93,6 +93,13 @@ public class PasswordCryptographyProvider {
     private static byte[] getBase64DecodedStringAsBytes(String decode) {
         return Base64.getDecoder().decode(decode);
     }
+
+    /**
+     * Added main method for test purpose in swagger for getting Base64 encoded string of userName and password
+     * @param args
+     */
+    public static void main(String[] args){
+        String credential = "aakash123:123@aakash";
+        System.out.println(Base64.getEncoder().encodeToString(credential.getBytes()));
+    }
 }
-
-
