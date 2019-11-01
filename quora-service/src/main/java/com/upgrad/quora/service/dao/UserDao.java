@@ -1,4 +1,3 @@
- 
 package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
@@ -70,6 +69,11 @@ public class UserDao {
 
             return null;
         }
+    }
+
+    public void deleteUser(String uuid) {
+        UserEntity userEntity = getUserByUuid(uuid);
+        entityManager.remove(userEntity);
     }
 
 }
