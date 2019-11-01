@@ -1,3 +1,4 @@
+
 package com.upgrad.quora.service.entity;
 
 import javax.persistence.*;
