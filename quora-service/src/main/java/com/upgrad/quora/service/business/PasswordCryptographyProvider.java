@@ -103,5 +103,3 @@ public class PasswordCryptographyProvider {
         System.out.println(Base64.getEncoder().encodeToString(credential.getBytes()));
     }
 }
-
-
