@@ -1,66 +1,71 @@
 package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.QuestionEntity;
-import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 public class QuestionDao {
-
-
     @PersistenceContext
     private EntityManager entityManager;
-
-    public UserEntity createUser(UserEntity userEntity) {
-        entityManager.persist(userEntity);
-        return userEntity;
-    }
 
     public QuestionEntity createQuestion(QuestionEntity questionEntity) {
         entityManager.persist(questionEntity);
         return questionEntity;
     }
 
-    public UserEntity getUser(final String userName) {
+    public QuestionEntity getQuestionByQUuid(final String uuid) {
         try {
-            return entityManager.createNamedQuery("userByUserame", UserEntity.class).setParameter("username", userName)
-                    .getSingleResult();
+            return entityManager.createNamedQuery("questionByQUuid", QuestionEntity.class).setParameter("uuid", uuid).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }
     }
 
-    public UserEntity getUserByEmail(final String email) {
+    public List < QuestionEntity > getAllQuestionsByUserId(final UserEntity user) {
         try {
-            return entityManager.createNamedQuery("userByEmail", UserEntity.class).setParameter("email", email).getSingleResult();
-        } catch (NoResultException nre) {
-            return null;
-        }
-    }
-
-    public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
-        entityManager.persist(userAuthTokenEntity);
-        return userAuthTokenEntity;
-    }
-
-    public void updateUser(final UserEntity updatedUserEntity) {
-        entityManager.merge(updatedUserEntity);
-    }
-
-
-    public UserAuthTokenEntity getUserAuthToken(final String accessToken) {
-        try {
-            return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
+            return entityManager.createNamedQuery("allQuestionsByUserId", QuestionEntity.class).setParameter("user", user).getResultList();
         } catch (NoResultException nre) {
 
             return null;
         }
-
     }
 
+    public List < QuestionEntity > getAllQuestions() {
+        try {
+            return entityManager.createNamedQuery("allQuestions", QuestionEntity.class).getResultList();
+        } catch (NoResultException nre) {
+
+            return null;
+        }
+    }
+    public QuestionEntity updateQuestion(final QuestionEntity questionEntity) {
+        return entityManager.merge(questionEntity);
+    }
+
+    public String deleteQuestion(final QuestionEntity questionEntity) {
+        String uuid = questionEntity.getUuid();
+        entityManager.remove(questionEntity);
+        return uuid;
+    }
+
+    /**
+     * Method to get the QuestionEntity by uuid
+     *
+     * @param questionId
+     * @return QuestionEntity
+     */
+
+    public QuestionEntity getQuestionById(String questionId) {
+        try {
+            return entityManager.createNamedQuery("questionById", QuestionEntity.class).setParameter("uuid", questionId).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
 }
