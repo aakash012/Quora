@@ -1,16 +1,16 @@
 package com.upgrad.quora.service.business;
 
 
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.Random;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-
-import org.springframework.stereotype.Component;
 
 
 @Component
@@ -99,7 +99,7 @@ public class PasswordCryptographyProvider {
      * @param args
      */
     public static void main(String[] args){
-        String credential = "sharvi23:123@sharvvi";
+        String credential = "aakash123:123@aakash";
         System.out.println(Base64.getEncoder().encodeToString(credential.getBytes()));
     }
 }
