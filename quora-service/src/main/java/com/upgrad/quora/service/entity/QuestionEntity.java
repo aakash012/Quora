@@ -4,25 +4,25 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "question")
-@NamedQueries({
-        @NamedQuery(name = "questionByQUuid", query = "select q from QuestionEntity q where q.uuid =:uuid"),
-        @NamedQuery(name= "allQuestionsByUserId",query = "select qe from QuestionEntity qe inner join qe.user usr where usr.uuid = :uuid"),
-        @NamedQuery(name= "allQuestions",query = "select q from QuestionEntity q "),
-        @NamedQuery(name= "questionById",query = "select q from QuestionEntity q where q.uuid = :uuid")
+@NamedQueries(
+        {
+                @NamedQuery(name = "getAllQuestion", query = "select u from QuestionEntity u "),
+                @NamedQuery(name = "questionByUUID", query = "select u from QuestionEntity u where u.uuid =:UUID"),
+                @NamedQuery(name = "getAllQuestionByUser", query = "select u from QuestionEntity u where u.user.id =:UserID"),
+                @NamedQuery(name = "getAllQuestionByID", query = "select u from QuestionEntity u where u.id =:QUESTIONID")
 
-})
-public class QuestionEntity implements Serializable {
+
+        }
+)
+public class QuestionEntity implements Serializable{
 
     @Id
     @Column(name = "ID")
@@ -30,21 +30,18 @@ public class QuestionEntity implements Serializable {
     private Integer id;
 
     @Column(name = "UUID")
-    @Size(max = 200)
+    @NotNull
     private String uuid;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "USER_ID")
     private UserEntity user;
 
     @Column(name = "CONTENT")
     @NotNull
-    @Size(max = 500)
     private String content;
 
     @Column(name = "DATE")
-    @NotNull
     private ZonedDateTime date;
 
     public Integer getId() {
@@ -86,6 +83,7 @@ public class QuestionEntity implements Serializable {
     public void setDate(ZonedDateTime date) {
         this.date = date;
     }
+
     @Override
     public boolean equals(Object obj) {
         return new EqualsBuilder().append(this, obj).isEquals();
@@ -100,4 +98,6 @@ public class QuestionEntity implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
+
+
 }
