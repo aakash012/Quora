@@ -6,80 +6,92 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-
 @Entity
 @Table(name = "users")
-@NamedQueries({
-        @NamedQuery(name = "userByEmail", query = "select u from UserEntity u where u.email = :email"),
-        @NamedQuery(name = "userByUserName", query = "select u from UserEntity u where u.userName = :userName"),
-        @NamedQuery(name ="userByUuid",query="select u from UserEntity u where u.uuid =:uuid"),
-        @NamedQuery(name ="userByRole",query="select u from UserEntity u where u.role=:role"),
-        @NamedQuery(name = "authenticateUserQuery", query = "select u from UserEntity u where u.userName= :userName and u.password= :password")
-})
+@NamedQueries(
+        {
+                @NamedQuery(name = "userByUserName", query = "select u from UserEntity u where u.username = :userName"),
+                @NamedQuery(name = "userByEmail", query = "select u from UserEntity u where u.email =:email"),
+                @NamedQuery(name = "userByUUID", query = "select u from UserEntity u where u.uuid =:UUID"),
+                @NamedQuery(name = "userByID", query = "select u from UserEntity u where u.id =:ID"),
+                @NamedQuery(name = "userByPassword", query = "select u from UserEntity u where u.password =:userpassword")
+        }
+)
 
 public class UserEntity implements Serializable {
-
     @Id
-    @Column(name = "id")
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "uuid")
-    @NotNull
+    @Column(name = "UUID")
     @Size(max = 64)
     private String uuid;
 
-    @Column(name = "firstname")
+    @Column(name = "FIRSTNAME")
     @NotNull
     @Size(max = 200)
     private String firstName;
 
-    @Column(name = "lastname")
+    @Column(name = "LASTNAME")
     @NotNull
     @Size(max = 200)
     private String lastName;
 
-    @Column(name = "username")
+    @Column(name = "USERNAME")
     @NotNull
-    @Size(max = 200)
-    private String userName;
+    private String username;
 
-    @Column(name = "email")
+    @Column(name = "EMAIL")
     @NotNull
     @Size(max = 200)
     private String email;
 
-    @Column(name = "password")
+    //@ToStringExclude
+    @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name = "salt")
+    @Column(name = "SALT")
     @NotNull
     @Size(max = 200)
     private String salt;
 
-    @Column(name = "country")
-    @Size(max = 50)
+    @Column(name = "COUNTRY")
+    @NotNull
     private String country;
 
-    @Column(name = "aboutme")
-    @Size(max = 50)
+    @Column(name = "ABOUTME")
+    @NotNull
     private String aboutMe;
 
-    @Column(name = "dob")
-    @Size(max = 50)
+    @Column(name = "DOB")
+    @NotNull
     private String dob;
 
-    @Column(name = "role")
-    @Size(max = 50)
+
+    @Column(name = "ROLE")
+    @NotNull
     private String role;
 
-    @Column(name = "contactnumber")
+    @Column(name = "CONTACTNUMBER")
+    @NotNull
     @Size(max = 50)
     private String contactNumber;
+
+
+
+
+
+
+
+
+
 
 
     public Integer getId() {
@@ -98,30 +110,6 @@ public class UserEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -138,12 +126,36 @@ public class UserEntity implements Serializable {
         this.password = password;
     }
 
-    public String getSalt() {
-        return salt;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setSalt(String salt) {
-        this.salt = salt;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    public String getUserName() {
+        return username;
+    }
+
+    public void setUserName(String userName) {
+        this.username = userName;
     }
 
     public String getCountry() {
@@ -162,14 +174,6 @@ public class UserEntity implements Serializable {
         this.aboutMe = aboutMe;
     }
 
-    public String getDob() {
-        return dob;
-    }
-
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
-
     public String getRole() {
         return role;
     }
@@ -178,18 +182,31 @@ public class UserEntity implements Serializable {
         this.role = role;
     }
 
-    public String getContactNumber() {
-        return contactNumber;
+    public String getSalt() {
+        return salt;
     }
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+
+
 
     @Override
     public boolean equals(Object obj) {
         return new EqualsBuilder().append(this, obj).isEquals();
     }
+
+
 
     @Override
     public int hashCode() {
@@ -200,6 +217,5 @@ public class UserEntity implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
-
 
 }

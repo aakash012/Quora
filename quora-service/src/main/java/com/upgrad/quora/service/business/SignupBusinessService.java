@@ -15,47 +15,30 @@ public class SignupBusinessService {
     private UserDao userDao;
 
     @Autowired
-    private PasswordCryptographyProvider passwordCryptographyProvider;
+    private PasswordCryptographyProvider cryptographyProvider;
 
-    /**
-     * @param  userEntity the first {@code UserEntity} to signup a user.
-     * @return UserEntity objects.
-     */
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserEntity signup(UserEntity userEntity) throws SignUpRestrictedException {
-        if (!isUserExist(userEntity) && !isUserEmailExist(userEntity)) {
-            String[] encryptedText = passwordCryptographyProvider.encrypt(userEntity.getPassword());
-            userEntity.setSalt(encryptedText[0]);
-            userEntity.setPassword(encryptedText[1]);
-            return userDao.createUser(userEntity);
-        }
-        return null;
+    public UserEntity signup(final UserEntity userentity) throws SignUpRestrictedException {
+        UserEntity userEntity =  userDao.getUserName(userentity.getUserName());
 
-    }
-
-    /**
-     * @param  userEntity the first {@code UserEntity} to check if the user already exists.
-     * @return true or false
-     */
-    private boolean isUserExist(UserEntity userEntity) throws SignUpRestrictedException {
-        UserEntity entity = userDao.getUserByUserName(userEntity.getUserName());
-        if (entity != null) {
+        if (userEntity != null) {
             throw new SignUpRestrictedException("SGR-001", "Try any other Username, this Username has already been taken");
-        } else {
-            return false;
         }
-    }
 
-    /**
-     * @param  userEntity the first {@code UserEntity} to check if the user email already exists.
-     * @return true or false
-     */
-    private boolean isUserEmailExist(UserEntity userEntity) throws SignUpRestrictedException {
-        UserEntity emailEntity = userDao.getUserByEmail(userEntity.getEmail());
-        if (emailEntity != null) {
+        UserEntity userEntitys =  userDao.getUserByEmail(userentity.getEmail());
+        if (userEntitys != null) {
             throw new SignUpRestrictedException("SGR-002", "This user has already been registered, try with any other emailId");
-        } else {
-            return false;
         }
+
+        String password = userentity.getPassword();
+        if (password == null) {
+
+        }
+
+        String[] encryptedText = cryptographyProvider.encrypt(userentity.getPassword());
+        userentity.setSalt(encryptedText[0]);
+        userentity.setPassword(encryptedText[1]);
+        return userDao.createUser(userentity);
+
     }
 }

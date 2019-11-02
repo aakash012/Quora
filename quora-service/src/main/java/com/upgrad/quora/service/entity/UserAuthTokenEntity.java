@@ -4,8 +4,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,9 +14,7 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "user_auth")
 @NamedQueries({
-        @NamedQuery(name = "userAuthTokenByAccessToken", query = "select ut from UserAuthTokenEntity ut where ut.accessToken = :accessToken "),
-        @NamedQuery(name="UserByUserUuid",query ="select ut from UserAuthTokenEntity ut where ut.id =:uuid"),
-        @NamedQuery(name="userAuthTokenByUuid",query="select ut from UserAuthTokenEntity ut where ut.uuid = :uuid")
+        @NamedQuery(name = "userAuthTokenByAccessToken", query = "select ut from UserAuthTokenEntity ut where ut.accessToken = :accessToken ")
 })
 public class UserAuthTokenEntity implements Serializable {
 
@@ -28,11 +24,10 @@ public class UserAuthTokenEntity implements Serializable {
     private Integer id;
 
     @Column(name = "UUID")
-    @Size(max = 200)
+    @NotNull
     private String uuid;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "USER_ID")
     private UserEntity user;
 
@@ -51,7 +46,6 @@ public class UserAuthTokenEntity implements Serializable {
 
     @Column(name = "LOGOUT_AT")
     private ZonedDateTime logoutAt;
-
     public Integer getId() {
         return id;
     }
@@ -122,4 +116,5 @@ public class UserAuthTokenEntity implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
+
 }
